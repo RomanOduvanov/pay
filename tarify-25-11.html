@@ -56,6 +56,7 @@ h1,h2,h3{margin:0;font-weight:500;letter-spacing:-.03em;text-wrap:balance}
 .price .old{color:var(--ink3);font-size:14px}
 .price .old s{text-decoration-color:rgba(255,255,255,.5)}
 .price .inst{color:var(--ink2);font-size:14px}
+.price .disc{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-top:6px;font-size:14px;color:var(--ink2)}.price .disc span{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:99px;background:rgba(74,222,128,.14);color:#4ade80;font-weight:600;font-size:13px;font-variant-numeric:tabular-nums}.price .disc b{color:var(--fg);font-weight:500}.price .disc em{font-style:normal;white-space:nowrap}
 .price .inst b{color:var(--fg);font-weight:500}
 ul.inc{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:14px;color:var(--ink2)}
 ul.inc li{position:relative;padding-left:22px}
@@ -132,7 +133,7 @@ body.m .mgr{display:block}
 
   <header class="hero">
     <h1>AI-дизайнер с&nbsp;0 до&nbsp;PRO&nbsp;3.0</h1>
-    <p>AI-дизайн с&nbsp;нуля, портфолио и&nbsp;первые заказы&nbsp;— в&nbsp;закрытой группе, старт 25&nbsp;ноября. Выбери тариф, затем способ оплаты&nbsp;— сразу или в&nbsp;рассрочку.</p>
+    <p>AI-дизайн с&nbsp;нуля, портфолио и&nbsp;первые заказы&nbsp;— в&nbsp;закрытой группе, старт 25&nbsp;ноября. Выбери тариф, затем способ оплаты&nbsp;— частями или сразу со&nbsp;скидкой.</p>
   </header>
 
   <div class="steps" aria-label="Шаги">
@@ -140,7 +141,7 @@ body.m .mgr{display:block}
   </div>
 
   <section class="grid" id="cards" aria-label="Тарифы"></section>
-  <p class="note" id="n1">Цены в&nbsp;рублях. Способ рассрочки выберешь на&nbsp;странице оплаты.</p>
+  <p class="note" id="n1">Цены в&nbsp;рублях. Сервис оплаты частями выберешь на&nbsp;странице оплаты.</p>
 
   <section class="pay" id="pay" aria-live="polite">
     <button class="back" id="back" type="button">← Другой тариф</button>
@@ -148,8 +149,8 @@ body.m .mgr{display:block}
       <div class="k">Твой тариф</div>
       <h2 id="pName"></h2>
       <div class="opts">
-        <a class="btn pink opt" id="payNow" href="#"><span id="payNowT"></span><small>картой, СБП или&nbsp;зарубежной картой</small></a>
-        <a class="btn ghost opt" id="payInst" href="#"><span id="payInstT"></span><small>Сплит, Подели и&nbsp;рассрочка банков</small></a>
+        <a class="btn pink opt" id="payInst" href="#"><span id="payInstT"></span><small>Сплит, Подели или&nbsp;рассрочка банков</small></a>
+        <a class="btn ghost opt" id="payNow" href="#"><span id="payNowT"></span><small id="payNowS">картой, СБП или&nbsp;зарубежной картой</small></a>
       </div>
       <form class="ord" id="ord" novalidate>
         <div class="chosen"><span id="oWhat"></span><b id="oSum"></b></div>
@@ -236,9 +237,9 @@ body.m .mgr{display:block}
   ORDER.forEach(function(k){var t=T[k],p=t[MODE],o=t.regular;
     h+='<article class="card'+(t.hit?' hit':'')+'">'+(t.hit?'<span class="tag">'+t.hit+'</span>':'')
       +'<div><h2>'+esc(t.nm)+'</h2></div><div class="sub">'+esc(t.sub)+'</div>'
-      +'<div class="price"><div class="now">'+rub(p.now[1])+'</div>'
-      +(!REG&&o.now[1]!==p.now[1]?'<div class="old">обычная цена <s>'+rub(o.now[1])+'</s></div>':'')
-      +'<div class="inst">или в'+NB+'рассрочку&nbsp;— <b>'+rub(p.inst[1])+'</b></div></div>'
+      +'<div class="price"><div class="now">'+rub(p.inst[1])+'</div>'
+      +(!REG&&o.inst[1]!==p.inst[1]?'<div class="old">обычная цена <s>'+rub(o.inst[1])+'</s></div>':'')
+      +'<div class="disc"><span>−'+rub(p.inst[1]-p.now[1])+'</span><em>сразу картой&nbsp;— <b>'+rub(p.now[1])+'</b></em></div></div>'
       +'<ul class="inc">'+t.inc.map(function(x){return '<li'+(x[1]?' class="'+x[1]+'"':'')+'>'+esc(x[0])+'</li>'}).join('')+'</ul>'
       +'<div class="sp"></div><button class="btn '+(t.hit?'pink':'ghost')+'" type="button" data-k="'+k+'">Выбрать '+esc(t.nm)+'</button></article>'});
   el('cards').innerHTML=h;
@@ -250,8 +251,9 @@ body.m .mgr{display:block}
     el('st1').classList.toggle('on',!k);el('st2').classList.toggle('on',!!k);
     if(k){var t=T[k],p=t[MODE];
       el('pName').textContent=t.nm;
-      el('payNowT').textContent='Оплатить сразу'+NB+'— '+rub(p.now[1]);
-      el('payInstT').textContent='В'+NB+'рассрочку'+NB+'— '+rub(p.inst[1]);
+      el('payInstT').textContent='Оплатить частями'+NB+'— '+rub(p.inst[1]);
+      el('payNowT').textContent='Сразу со'+NB+'скидкой'+NB+'— '+rub(p.now[1]);
+      el('payNowS').textContent='картой или СБП · скидка '+rub(p.inst[1]-p.now[1]);
       el('payNow').href=GC+p.now[0];el('payInst').href=GC+p.inst[0];
     }
     if(push!==undefined)setUrl(k,push);
@@ -259,7 +261,7 @@ body.m .mgr{display:block}
   }
   /* 03.11: своя форма заказа вместо белой страницы GetCourse — данные уходят POST'ом прямо в форму заказа предложения (OrderForm), дальше — страница оплаты GetCourse */
   var OFF=null;
-  function ordOpen(e,which){e.preventDefault();if(!SEL)return;var p=T[SEL][MODE][which];OFF=p[0];el('oWhat').textContent=(which==='now'?'Сразу':'В'+NB+'рассрочку')+' · '+T[SEL].nm;el('oSum').textContent=rub(p[1]);el('pay').querySelector('.sum').classList.add('f');el('oErr').textContent='';setTimeout(function(){el('oName').focus()},50)}
+  function ordOpen(e,which){e.preventDefault();if(!SEL)return;var p=T[SEL][MODE][which];OFF=p[0];el('oWhat').textContent=(which==='now'?'Сразу со'+NB+'скидкой':'Частями')+' · '+T[SEL].nm;el('oSum').textContent=rub(p[1]);el('pay').querySelector('.sum').classList.add('f');el('oErr').textContent='';setTimeout(function(){el('oName').focus()},50)}
   el('payNow').addEventListener('click',function(e){ordOpen(e,'now')});el('payInst').addEventListener('click',function(e){ordOpen(e,'inst')});
   el('oChg').addEventListener('click',function(){el('pay').querySelector('.sum').classList.remove('f')});
   el('ord').addEventListener('submit',function(e){e.preventDefault();var n=el('oName').value.trim(),m=el('oMail').value.trim(),t=el('oTel').value.trim(),bad=[];
@@ -286,8 +288,8 @@ body.m .mgr{display:block}
     el('mPages').innerHTML=pg.map(function(x){return row(x[0],x[1],'',x[1])}).join('');
     var of=[];ORDER.forEach(function(k){var t=T[k];(k==='base'?['early']:['early','regular']).forEach(function(m){var p=t[m],lb=k==='base'?'':(m==='early'?' · ранняя':' · обычная');
       var q='?'+(m==='regular'?'p=regular&':'')+'t='+k;
-      of.push(row(t.nm+lb+' · сразу',base+q+'&pay=now',rub(p.now[1]),base+q+'&pay=now'));
-      of.push(row(t.nm+lb+' · рассрочка',base+q+'&pay=inst',rub(p.inst[1]),base+q+'&pay=inst'))})});
+      of.push(row(t.nm+lb+' · сразу со скидкой',base+q+'&pay=now',rub(p.now[1]),base+q+'&pay=now'));
+      of.push(row(t.nm+lb+' · частями',base+q+'&pay=inst',rub(p.inst[1]),base+q+'&pay=inst'))})});
     el('mOffers').innerHTML=of.join('');
     el('mgr').addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var u=b.getAttribute('data-copy');
       function done(){b.textContent='Скопировано';b.classList.add('ok');setTimeout(function(){b.textContent='Копировать';b.classList.remove('ok')},1600)}
