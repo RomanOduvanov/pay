@@ -27,7 +27,7 @@ body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font:400 15p
 a{color:inherit}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
 a:focus-visible,button:focus-visible{outline:2px solid var(--lil);outline-offset:3px}
-.wrap{max-width:1120px;margin:0 auto;padding:28px max(16px,env(safe-area-inset-right,0px)) 64px max(16px,env(safe-area-inset-left,0px))}
+.wrap{max-width:1120px;margin:0 auto;padding:28px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:28px}
 .brand{display:flex;align-items:center;gap:12px}.brand svg{flex:none;display:block}.brand span{font-weight:600;font-size:20px;letter-spacing:-.02em;color:#fff}.brand i{font-style:normal;color:#c38bff}
 
@@ -111,6 +111,16 @@ body.m .mgr{display:block}
 @media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr);gap:22px}.card.hit{order:-1}}
 @media (max-width:480px){.wrap{padding-top:18px}.top{flex-wrap:wrap}.badge{white-space:normal}.top{margin-bottom:22px}.hero p{font-size:15px}.card h2{font-size:24px}.price .now{font-size:30px}.sum h2{font-size:24px}}
 @media (min-width:901px){.row{grid-template-columns:minmax(0,1fr) auto auto}.row .a{grid-column:auto}}
+.ft{border-top:1px solid var(--hair);margin-top:24px;background:linear-gradient(180deg,rgba(255,255,255,.015),transparent)}
+.ft-in{max-width:1120px;margin:0 auto;padding:36px max(16px,env(safe-area-inset-right,0px)) calc(28px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:28px}
+.ft-top{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1fr);gap:28px 40px}
+.ft-brand{display:flex;flex-direction:column;gap:14px}.ft-brand .brand span{font-size:17px}.ft-brand p{margin:0;color:var(--ink2);font-size:14px;line-height:1.5;max-width:34ch}
+.ft-soc{display:flex;flex-wrap:wrap;gap:8px}.ft-soc a{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border-radius:11px;background:var(--s1);border:1px solid var(--hair);color:var(--fg);text-decoration:none;font-size:13px}.ft-soc a:hover{border-color:var(--lilLine)}
+.ft-col{display:flex;flex-direction:column;gap:10px;font-size:14px;line-height:1.45;color:var(--ink2);min-width:0}.ft-col h4{margin:0 0 2px;font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.ft-col a{color:var(--ink2);text-decoration:none;overflow-wrap:anywhere}.ft-col a:hover{color:var(--lil)}
+.ft-bot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;padding-top:18px;border-top:1px solid var(--hair);font-size:12.5px;color:var(--ink3)}
+@media(max-width:860px){.ft-top{grid-template-columns:1fr 1fr}.ft-brand{grid-column:1/-1}}
+@media(max-width:560px){.ft-top{grid-template-columns:1fr;gap:26px}.ft-in{padding-top:28px}}
 </style>
 </head>
 <body>
@@ -168,6 +178,38 @@ body.m .mgr{display:block}
     <div class="rows" id="mOffers"></div>
   </section>
 </div>
+<footer class="ft" aria-label="Информация о школе">
+  <div class="ft-in">
+    <div class="ft-top">
+      <div class="ft-brand">
+        <div class="brand" aria-label="OduvanovSchool"><svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><rect width="20" height="20" rx="3" fill="#fff"/><rect x="22" width="20" height="20" rx="3" fill="#fff"/><rect x="44" width="20" height="20" rx="3" fill="#c38bff"/><rect y="22" width="20" height="20" rx="3" fill="#fff"/><rect x="44" y="22" width="20" height="20" rx="3" fill="#fff"/><rect y="44" width="20" height="20" rx="3" fill="#fff"/><rect x="22" y="44" width="20" height="20" rx="3" fill="#fff"/><rect x="44" y="44" width="20" height="20" rx="3" fill="#fff"/></svg><span>Oduvanov<i>School</i></span></div>
+        <p>Онлайн-школа AI-дизайна Романа Одуванова. Официальная образовательная лицензия.</p>
+        <div class="ft-soc">
+          <a href="https://t.me/zabota_oduvanov" target="_blank" rel="noopener">Поддержка в&nbsp;Telegram</a>
+          <a href="https://t.me/+2EZPU-Wk-3kwOGYy" target="_blank" rel="noopener">Telegram-канал</a>
+          <a href="https://www.youtube.com/@romanoduvanov" target="_blank" rel="noopener">YouTube</a>
+        </div>
+      </div>
+      <div class="ft-col">
+        <h4>Документы</h4>
+        <a href="https://disk.yandex.ru/i/CyvFWo7TiSEnOQ" target="_blank" rel="noopener">Публичная оферта</a>
+        <a href="https://disk.yandex.ru/i/rieVbzRz5zmWJQ" target="_blank" rel="noopener">Политика конфиденциальности</a>
+        <a href="https://disk.yandex.ru/i/VN6iHm8CzerQwA" target="_blank" rel="noopener">Согласие на&nbsp;обработку персональных данных</a>
+        <a href="https://disk.yandex.ru/i/uOu6x0S3QkqOIw" target="_blank" rel="noopener">Согласие на&nbsp;рассылку сообщений</a>
+        <a href="https://drive.google.com/file/d/1ynPsPntd4NJVOnwPsGR-xZgkAU_qa2A1/view" target="_blank" rel="noopener">Программа обучения</a>
+      </div>
+      <div class="ft-col">
+        <h4>Реквизиты</h4>
+        <span>Индивидуальный предприниматель Алексейчук Алексей Геннадьевич</span>
+        <span>ИНН 525813449006</span>
+        <span>ОГРНИП 323527500095866</span>
+        <span>Лицензия на&nbsp;образовательную деятельность №&nbsp;Л035-01281-52/02584121 от&nbsp;03.07.2025</span>
+        <a href="mailto:romanoduvanov52@gmail.com">romanoduvanov52@gmail.com</a>
+      </div>
+    </div>
+    <div class="ft-bot"><span>© OduvanovSchool. Все права защищены</span><span>® Роман Одуванов / Roman Oduvanov</span></div>
+  </div>
+</footer>
 
 <script>
 (function(){
