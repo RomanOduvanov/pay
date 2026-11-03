@@ -161,10 +161,10 @@ body.m .mgr{display:block}
 
   <section class="mgr" id="mgr" aria-label="Ссылки для менеджеров">
     <h3>Ссылки для менеджеров</h3>
-    <p>Ссылку на&nbsp;оплату клиент открывает сам: если открыть её, будучи в&nbsp;своём аккаунте GetCourse, заказ оформится на&nbsp;тебя.</p>
+    <p>Клиент вводит свои имя, почту и&nbsp;телефон на&nbsp;нашей странице&nbsp;— заказ оформится на&nbsp;него, даже если ссылку открывал ты.</p>
     <h4>Страница тарифов</h4>
     <div class="rows" id="mPages"></div>
-    <h4>Оплата напрямую</h4>
+    <h4>Сразу на форму заказа</h4>
     <div class="rows" id="mOffers"></div>
   </section>
 </div>
@@ -232,6 +232,8 @@ body.m .mgr{display:block}
   el('back').addEventListener('click',function(){if(history.state&&history.state.t)history.back();else show(null,false)});
   window.addEventListener('popstate',function(){var k=new URLSearchParams(location.search).get('t');show(k)});
   var t0=Q.get('t');if(t0==='prem')t0='premium';if(t0==='amz')t0='amazon';if(T[t0])show(t0,false);
+  /* ?pay=now|inst — сразу форма заказа выбранного тарифа (ссылки для менеджеров) */
+  setTimeout(function(){var w=Q.get('pay');if(SEL&&(w==='now'||w==='inst'))ordOpen({preventDefault:function(){}},w)},0);
 
   /* ?m=1 — ссылки для менеджеров */
   if(Q.get('m')==='1'){document.body.classList.add('m');
@@ -241,8 +243,9 @@ body.m .mgr{display:block}
     ORDER.forEach(function(k){pg.push([T[k].nm+', ранняя цена',base+'?t='+k]);if(k!=='base')pg.push([T[k].nm+', обычная цена',base+'?p=regular&t='+k])});
     el('mPages').innerHTML=pg.map(function(x){return row(x[0],x[1],'',x[1])}).join('');
     var of=[];ORDER.forEach(function(k){var t=T[k];(k==='base'?['early']:['early','regular']).forEach(function(m){var p=t[m],lb=k==='base'?'':(m==='early'?' · ранняя':' · обычная');
-      of.push(row(t.nm+lb+' · сразу','оффер '+p.now[0]+' · '+GC+p.now[0],rub(p.now[1]),GC+p.now[0]));
-      of.push(row(t.nm+lb+' · рассрочка','оффер '+p.inst[0]+' · '+GC+p.inst[0],rub(p.inst[1]),GC+p.inst[0]))})});
+      var q='?'+(m==='regular'?'p=regular&':'')+'t='+k;
+      of.push(row(t.nm+lb+' · сразу',base+q+'&pay=now',rub(p.now[1]),base+q+'&pay=now'));
+      of.push(row(t.nm+lb+' · рассрочка',base+q+'&pay=inst',rub(p.inst[1]),base+q+'&pay=inst'))})});
     el('mOffers').innerHTML=of.join('');
     el('mgr').addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var u=b.getAttribute('data-copy');
       function done(){b.textContent='Скопировано';b.classList.add('ok');setTimeout(function(){b.textContent='Копировать';b.classList.remove('ok')},1600)}
