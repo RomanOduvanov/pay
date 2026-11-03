@@ -192,7 +192,7 @@ body.m .mgr{display:block}
 
   <section class="cpl" id="cpl" aria-label="Своя ссылка на оплату">
     <h3>Своя ссылка на&nbsp;оплату</h3>
-    <p>Для брони и&nbsp;предоплаты: выбери, к&nbsp;чему открыть доступ, срок и&nbsp;сумму. Доступ откроется сам после оплаты, в&nbsp;том числе частичной (в&nbsp;течение ~30&nbsp;минут).</p>
+    <p>Для брони и&nbsp;предоплаты: выбери, к&nbsp;чему открыть доступ, срок и&nbsp;сумму. Доступ откроется сам сразу после оплаты, в&nbsp;том числе частичной.</p>
     <div class="cpl-lock" id="cplLock">Открой этот кабинет по&nbsp;ссылке от&nbsp;бота школы (команда /manager у&nbsp;Романа)&nbsp;— без неё создать ссылку нельзя.</div>
     <form id="cplF" class="cpl-f hid" autocomplete="off">
       <div class="cpl-g"><span class="cpl-l">К&nbsp;чему открыть доступ</span><div class="cpl-it" id="cplIt"></div></div>
@@ -237,7 +237,7 @@ body.m .mgr{display:block}
       </div>
       <div class="ft-col">
         <h4>Реквизиты</h4>
-        <span>Индивидуальный предприниматель Алексейчук Алексей Геннадьевич</span>
+        <span>Индивидуальный предприниматель<br><span style="white-space:nowrap">Алексейчук Алексей Геннадьевич</span></span>
         <span>ИНН 525813449006</span>
         <span>ОГРНИП 323527500095866</span>
         <span>Лицензия на&nbsp;образовательную деятельность №&nbsp;Л035-01281-52/02584121 от&nbsp;03.07.2025</span>
@@ -350,9 +350,9 @@ body.m .mgr{display:block}
         return '<div class="row"><div class="t"><b>'+esc(c.email)+' · '+fmt(c.sum)+'</b><span>'+esc(c.items.map(nm).join(', '))+' · '+esc(st)+(c.note?' · '+esc(c.note):'')+'</span></div><div></div><div class="a">'+(c.link?'<button class="mini" type="button" data-copy="'+esc(c.link)+'">Копировать</button>':'')+'</div></div>'}).join('')})};
     call('/pay/catalog').then(function(j){if(!j||!j.ok){el('cplLock').textContent=(j&&j.err)||'Нет доступа';return}CAT=j;el('cplLock').classList.add('hid');el('cplF').classList.remove('hid');
       if(!j.key)el('cplOut').innerHTML='<span class="err">Сервер ещё не подключён к GetCourse на запись (ключ GC_KEY_W) — ссылку создать пока нельзя.</span>';
-      var g={course:'Курс',mod:'Модули закрытой группы 3.0',bonus:'Бонусы'},last='';el('cplIt').innerHTML=j.items.map(function(x){var h=x.k!==last?'<div class="sep">'+g[x.k]+'</div>':'';last=x.k;return h+'<label><input type="checkbox" value="'+x.id+'"><span>'+esc(x.t.replace(/^Бонус: /,''))+'</span></label>'}).join('');
+      var g={course:'Курс',tariff:'Тариф — один на выбор (влияет на Amazon и рейтинг; можно не выбирать)',mod:'Модули закрытой группы 3.0',bonus:'Бонусы'},last='';el('cplIt').innerHTML=j.items.map(function(x){var h=x.k!==last?'<div class="sep">'+g[x.k]+'</div>':'';last=x.k;return h+'<label><input type="checkbox" value="'+x.id+'"><span>'+esc(x.t.replace(/^(Бонус|Тариф): /,''))+'</span></label>'}).join('');
       el('cplTerm').innerHTML=j.terms.map(function(t){return '<button type="button" data-t="'+t.id+'">'+esc(t.t)+'</button>'}).join('');
-      el('cplIt').addEventListener('change',function(e){var l=e.target.closest('label');if(l)l.classList.toggle('on',e.target.checked);var all=el('cplIt').querySelector('input[value="all"]');if(e.target.value==='all'&&e.target.checked)[].forEach.call(el('cplIt').querySelectorAll('input'),function(i){if(/^m\d\d$|^amz$/.test(i.value)&&i.checked){i.checked=false;i.closest('label').classList.remove('on')}})});
+      el('cplIt').addEventListener('change',function(e){var l=e.target.closest('label');if(l)l.classList.toggle('on',e.target.checked);var all=el('cplIt').querySelector('input[value="all"]');if(/^t_/.test(e.target.value)&&e.target.checked)[].forEach.call(el('cplIt').querySelectorAll('input[value^="t_"]'),function(i){if(i!==e.target&&i.checked){i.checked=false;i.closest('label').classList.remove('on')}});if(e.target.value==='all'&&e.target.checked)[].forEach.call(el('cplIt').querySelectorAll('input'),function(i){if(/^m\d\d$|^amz$/.test(i.value)&&i.checked){i.checked=false;i.closest('label').classList.remove('on')}})});
       el('cplTerm').onclick=function(e){var b=e.target.closest('[data-t]');if(!b)return;TERM=b.getAttribute('data-t');[].forEach.call(this.children,function(x){x.classList.toggle('on',x===b)});var t=j.terms.filter(function(x){return x.id===TERM})[0];var d=new Date(Date.now()+t.days*864e5);el('cplTh').textContent='Если оплатят сегодня — доступ до '+d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'})};
       list()});
     el('cplF').onsubmit=function(e){e.preventDefault();var it=[].map.call(el('cplIt').querySelectorAll('input:checked'),function(i){return i.value}),sum=+String(el('cplSum').value).replace(/[\s ]/g,'').replace(',','.'),out=el('cplOut');
