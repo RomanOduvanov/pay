@@ -132,7 +132,16 @@ body.m .mgr{display:block}
 .ft-bot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;padding-top:18px;border-top:1px solid var(--hair);font-size:12.5px;color:var(--ink3)}
 @media(max-width:860px){.ft-top{grid-template-columns:1fr 1fr}.ft-brand{grid-column:1/-1}}
 @media(max-width:560px){.ft-top{grid-template-columns:1fr;gap:26px}.ft-in{padding-top:28px}}
-.nw{white-space:nowrap}.hero p{text-wrap:pretty}</style>
+.nw{white-space:nowrap}.hero p{text-wrap:pretty}.cpl{display:none;margin-top:8px;margin-bottom:34px;padding:22px;border-radius:22px;background:var(--s1);border:1px solid var(--hair2)}.mgrp .cpl{display:block}.cpl h3{font-size:22px;margin:0 0 6px}.cpl p{margin:0 0 16px;color:var(--ink2);font-size:14px}.cpl .hid{display:none!important}
+.cpl-lock{padding:14px 16px;border-radius:14px;background:rgba(255,180,140,.08);border:1px solid rgba(255,180,140,.3);color:#ffd2bd;font-size:14px}
+.cpl-f{display:flex;flex-direction:column;gap:16px}.cpl-g{display:flex;flex-direction:column;gap:8px;min-width:0;flex:1}.cpl-l{font-size:13px;color:var(--ink2);font-weight:500}.cpl-row{display:flex;gap:12px;flex-wrap:wrap}.cpl-row .cpl-g{min-width:220px}
+.cpl-it{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}.cpl-it label{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:var(--s2);border:1px solid var(--hair);cursor:pointer;font-size:14px;line-height:1.3;transition:border-color .15s,background-color .15s}.cpl-it label:hover{border-color:var(--hair2)}.cpl-it label.on{border-color:rgba(195,139,255,.6);background:rgba(195,139,255,.12)}.cpl-it input{margin-top:2px;accent-color:#c38bff}.cpl-it .sep{grid-column:1/-1;font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-top:6px}
+.cpl-sg{display:flex;flex-wrap:wrap;gap:6px}.cpl-sg button{height:38px;padding:0 14px;border-radius:12px;border:1px solid var(--hair2);background:var(--s2);color:#fff;font:500 14px/1 inherit;cursor:pointer;transition:background-color .15s,border-color .15s}.cpl-sg button:hover{background:var(--s3)}.cpl-sg button.on{background:rgba(195,139,255,.18);border-color:rgba(195,139,255,.6)}.cpl-h{color:var(--ink3);font-size:12.5px}
+.cpl-i{height:46px;padding:0 14px;border-radius:12px;border:1px solid var(--hair2);background:#0d0d0f;color:#fff;font:400 15px/1 inherit;width:100%;box-sizing:border-box}.cpl-i:focus{outline:0;border-color:rgba(195,139,255,.6)}
+.cpl-go{height:50px;border-radius:14px;border:0;background:#f4d9ff;color:#2a0a3d;font:600 16px/1 inherit;cursor:pointer;transition:filter .15s,transform .1s}.cpl-go:hover{filter:brightness(1.05)}.cpl-go:active{transform:scale(.98)}.cpl-go:disabled{opacity:.6;cursor:default}
+.cpl-out:empty{display:none}.cpl-out{padding:14px 16px;border-radius:14px;background:var(--s2);border:1px solid var(--hair2);font-size:14px}.cpl-out .err{color:#ffb4a8}.cpl-out .lk{display:flex;gap:8px;align-items:center;margin-top:8px}.cpl-out .lk input{flex:1;min-width:0}
+#cplLh{margin:22px 0 8px;font-weight:500;font-size:15px;color:var(--ink2)}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -181,6 +190,23 @@ body.m .mgr{display:block}
     </div>
   </section>
 
+  <section class="cpl" id="cpl" aria-label="Своя ссылка на оплату">
+    <h3>Своя ссылка на&nbsp;оплату</h3>
+    <p>Для брони и&nbsp;предоплаты: выбери, к&nbsp;чему открыть доступ, срок и&nbsp;сумму. Доступ откроется сам после оплаты, в&nbsp;том числе частичной (в&nbsp;течение ~30&nbsp;минут).</p>
+    <div class="cpl-lock" id="cplLock">Открой этот кабинет по&nbsp;ссылке от&nbsp;бота школы (команда /manager у&nbsp;Романа)&nbsp;— без неё создать ссылку нельзя.</div>
+    <form id="cplF" class="cpl-f hid" autocomplete="off">
+      <div class="cpl-g"><span class="cpl-l">К&nbsp;чему открыть доступ</span><div class="cpl-it" id="cplIt"></div></div>
+      <div class="cpl-g"><span class="cpl-l">Срок доступа</span><div class="cpl-sg" id="cplTerm"></div><small class="cpl-h" id="cplTh"></small></div>
+      <div class="cpl-row"><label class="cpl-g"><span class="cpl-l">Сумма, ₽</span><input class="cpl-i" id="cplSum" inputmode="decimal" placeholder="например, 15000"></label>
+        <label class="cpl-g"><span class="cpl-l">Почта ученика</span><input class="cpl-i" id="cplEm" type="email" placeholder="name@mail.ru"></label></div>
+      <div class="cpl-row"><label class="cpl-g"><span class="cpl-l">Имя</span><input class="cpl-i" id="cplNm" placeholder="необязательно"></label>
+        <label class="cpl-g"><span class="cpl-l">Телефон</span><input class="cpl-i" id="cplPh" placeholder="необязательно"></label></div>
+      <label class="cpl-g"><span class="cpl-l">Комментарий для себя</span><input class="cpl-i" id="cplNo" placeholder="например: бронь, остаток 40 000 до 25.11"></label>
+      <button class="cpl-go" type="submit" id="cplGo">Создать ссылку на&nbsp;оплату</button>
+      <div class="cpl-out" id="cplOut"></div>
+    </form>
+    <h4 class="hid" id="cplLh">Последние ссылки</h4><div class="rows" id="cplList"></div>
+  </section>
   <section class="mgr" id="mgr" aria-label="Ссылки для менеджеров">
     <h3>Ссылки для менеджеров</h3>
     <p>Скопируй ссылку под нужный тариф и&nbsp;способ оплаты и&nbsp;отправь клиенту. По&nbsp;ссылке он&nbsp;увидит только этот тариф и&nbsp;сразу форму заказа: имя, почта, телефон&nbsp;— и&nbsp;на&nbsp;оплату. Заказ оформится на&nbsp;клиента, даже если ссылку открывал ты.</p>
@@ -314,6 +340,30 @@ body.m .mgr{display:block}
       function fb(){try{var ta=document.createElement('textarea');ta.value=u;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();done()}catch(x){}}
       try{navigator.clipboard.writeText(u).then(done,fb)}catch(x){fb()}});
   }
+
+  /* 03.11 (Роман): своя ссылка на оплату — бронь/предоплата: доступ (модули 3.0, весь курс, бонусы), срок, сумма → заказ GetCourse через сервер школы */
+  if(MGR&&/^\/manager/.test(location.pathname)){(function(){var API='https://oduvanov-api.romanoduvanov52.workers.dev',K='';try{K=Q.get('k')||localStorage.getItem('cplK')||'';if(Q.get('k')){localStorage.setItem('cplK',Q.get('k'));history.replaceState(null,'',location.pathname)}}catch(e){K=Q.get('k')||''}
+    if(!K)return;var call=function(p,b){return fetch(API+p+(b?'':'?k='+encodeURIComponent(K)),b?{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(Object.assign({k:K},b))}:{}).then(function(r){return r.json()})};
+    var TERM='',fmt=function(n){return Math.round(+n||0).toLocaleString('ru-RU')+' ₽'},CAT=null;
+    var list=function(){call('/pay/list').then(function(j){if(!j||!j.ok)return;var L=j.list||[];el('cplLh').classList.toggle('hid',!L.length);var nm=function(id){var x=(CAT.items||[]).filter(function(i){return i.id===id})[0];return x?x.t.replace(/^Бонус: /,''):id};
+      el('cplList').innerHTML=L.slice(0,20).map(function(c){var st=c.st==='granted'?'оплачено'+(c.paid<c.sum?' частично ('+fmt(c.paid)+')':'')+' · доступ до '+String(c.until||'').slice(0,10).split('-').reverse().join('.'):c.st==='expired'?'срок вышел':'ждёт оплаты';
+        return '<div class="row"><div class="t"><b>'+esc(c.email)+' · '+fmt(c.sum)+'</b><span>'+esc(c.items.map(nm).join(', '))+' · '+esc(st)+(c.note?' · '+esc(c.note):'')+'</span></div><div></div><div class="a">'+(c.link?'<button class="mini" type="button" data-copy="'+esc(c.link)+'">Копировать</button>':'')+'</div></div>'}).join('')})};
+    call('/pay/catalog').then(function(j){if(!j||!j.ok){el('cplLock').textContent=(j&&j.err)||'Нет доступа';return}CAT=j;el('cplLock').classList.add('hid');el('cplF').classList.remove('hid');
+      if(!j.key)el('cplOut').innerHTML='<span class="err">Сервер ещё не подключён к GetCourse на запись (ключ GC_KEY_W) — ссылку создать пока нельзя.</span>';
+      var g={course:'Курс',mod:'Модули закрытой группы 3.0',bonus:'Бонусы'},last='';el('cplIt').innerHTML=j.items.map(function(x){var h=x.k!==last?'<div class="sep">'+g[x.k]+'</div>':'';last=x.k;return h+'<label><input type="checkbox" value="'+x.id+'"><span>'+esc(x.t.replace(/^Бонус: /,''))+'</span></label>'}).join('');
+      el('cplTerm').innerHTML=j.terms.map(function(t){return '<button type="button" data-t="'+t.id+'">'+esc(t.t)+'</button>'}).join('');
+      el('cplIt').addEventListener('change',function(e){var l=e.target.closest('label');if(l)l.classList.toggle('on',e.target.checked);var all=el('cplIt').querySelector('input[value="all"]');if(e.target.value==='all'&&e.target.checked)[].forEach.call(el('cplIt').querySelectorAll('input'),function(i){if(/^m\d\d$|^amz$/.test(i.value)&&i.checked){i.checked=false;i.closest('label').classList.remove('on')}})});
+      el('cplTerm').onclick=function(e){var b=e.target.closest('[data-t]');if(!b)return;TERM=b.getAttribute('data-t');[].forEach.call(this.children,function(x){x.classList.toggle('on',x===b)});var t=j.terms.filter(function(x){return x.id===TERM})[0];var d=new Date(Date.now()+t.days*864e5);el('cplTh').textContent='Если оплатят сегодня — доступ до '+d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'})};
+      list()});
+    el('cplF').onsubmit=function(e){e.preventDefault();var it=[].map.call(el('cplIt').querySelectorAll('input:checked'),function(i){return i.value}),sum=+String(el('cplSum').value).replace(/[\s ]/g,'').replace(',','.'),out=el('cplOut');
+      var er=!it.length?'Выбери, к чему открыть доступ':!TERM?'Выбери срок доступа':!(sum>=1)?'Укажи сумму':!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(el('cplEm').value.trim())?'Проверь почту ученика':'';if(er){out.innerHTML='<span class="err">'+er+'</span>';return}
+      var b=el('cplGo');b.disabled=true;b.textContent='Создаём заказ в GetCourse…';out.innerHTML='';
+      call('/pay/create',{items:it,term:TERM,sum:sum,email:el('cplEm').value.trim(),name:el('cplNm').value.trim(),phone:el('cplPh').value.trim(),note:el('cplNo').value.trim()}).then(function(r){
+        if(!r||!r.ok){out.innerHTML='<span class="err">'+esc((r&&r.err)||'Не получилось — попробуй ещё раз')+'</span>';return}
+        out.innerHTML='<b>Ссылка готова'+(r.num?' · заказ №'+r.num:'')+'</b><div class="lk"><input class="cpl-i" readonly value="'+esc(r.link||'')+'"><button class="mini" type="button" data-copy="'+esc(r.link||'')+'">Копировать</button></div>'+(r.link?'':'<span class="err">GetCourse не вернул ссылку — открой заказ в GetCourse.</span>');list()})
+      .catch(function(){out.innerHTML='<span class="err">Нет связи с сервером — попробуй ещё раз</span>'}).then(function(){b.disabled=false;b.innerHTML='Создать ссылку на&nbsp;оплату'})};
+    el('cpl').addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var u=b.getAttribute('data-copy');try{navigator.clipboard.writeText(u).then(function(){b.textContent='Скопировано';setTimeout(function(){b.textContent='Копировать'},1600)})}catch(x){}});
+  })()}
 })();
 </script>
 </body>
