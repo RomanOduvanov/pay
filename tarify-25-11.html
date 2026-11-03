@@ -89,6 +89,10 @@ body.s2 .grid,body.s2 #n1{display:none}
 .how li b{flex:none;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--s3);font-weight:500;font-size:12px;color:var(--fg)}
 
 /* менеджерам */
+.ord{display:none;flex-direction:column;gap:12px;margin-top:4px}.sum.f .opts,.sum.f .how{display:none}.sum.f .ord{display:flex}
+.ord .chosen{display:flex;justify-content:space-between;gap:12px;align-items:baseline;padding:12px 14px;border-radius:14px;background:var(--s2);border:1px solid var(--hair);font-size:14px;color:var(--ink2)}.ord .chosen b{color:var(--fg);font-weight:500;font-size:16px;white-space:nowrap}
+.ord label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--ink2)}.ord input{height:50px;border-radius:14px;border:1px solid var(--hair2);background:#0a0a0a;color:#fff;font:400 16px/1 inherit;font-family:inherit;padding:0 14px;outline:0}.ord input:focus{border-color:var(--lil);box-shadow:0 0 0 4px rgba(195,139,255,.16)}
+.ord input.bad{border-color:rgba(255,143,143,.7)}.ord .err{color:#ff8f8f;font-size:13px;min-height:0}.ord .chg{align-self:flex-start;background:none;border:0;color:var(--lil);font:inherit;font-size:14px;padding:4px 0;cursor:pointer}.ord .fine{font-size:12px;color:var(--ink3);line-height:1.45}
 .mgr{display:none;margin-top:48px;border-top:1px solid var(--hair2);padding-top:22px}
 body.m .mgr{display:block}
 .mgr h3{font-size:22px;margin-bottom:6px}
@@ -137,10 +141,20 @@ body.m .mgr{display:block}
         <a class="btn pink opt" id="payNow" href="#"><span id="payNowT"></span><small>картой, СБП или&nbsp;зарубежной картой</small></a>
         <a class="btn ghost opt" id="payInst" href="#"><span id="payInstT"></span><small>Сплит, Подели, кредит и&nbsp;рассрочка банков</small></a>
       </div>
+      <form class="ord" id="ord" novalidate>
+        <div class="chosen"><span id="oWhat"></span><b id="oSum"></b></div>
+        <label>Имя и&nbsp;фамилия<input id="oName" name="n" autocomplete="name" placeholder="Анна Смирнова"></label>
+        <label>Почта<input id="oMail" name="e" type="email" inputmode="email" autocomplete="email" placeholder="you@mail.ru" required></label>
+        <label>Телефон<input id="oTel" name="p" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 000-00-00" required></label>
+        <div class="err" id="oErr" role="alert"></div>
+        <button class="btn pink" id="oGo" type="submit">Перейти к&nbsp;оплате</button>
+        <button class="chg" id="oChg" type="button">← Другой способ оплаты</button>
+        <p class="fine">На&nbsp;эту почту придёт доступ к&nbsp;обучению. Дальше откроется страница оплаты.</p>
+      </form>
       <ul class="how">
-        <li><b>1</b><span>Откроется страница заказа GetCourse.</span></li>
-        <li><b>2</b><span>Укажи свою почту&nbsp;— на&nbsp;неё придёт доступ к&nbsp;обучению.</span></li>
-        <li><b>3</b><span>Нажми «Оформить заказ» и&nbsp;выбери способ оплаты.</span></li>
+        <li><b>1</b><span>Выбери, как&nbsp;удобнее оплатить.</span></li>
+        <li><b>2</b><span>Укажи имя, почту и&nbsp;телефон&nbsp;— на&nbsp;почту придёт доступ к&nbsp;обучению.</span></li>
+        <li><b>3</b><span>Откроется защищённая страница оплаты.</span></li>
       </ul>
     </div>
   </section>
@@ -190,7 +204,7 @@ body.m .mgr{display:block}
   function setUrl(k,push){try{var u=new URLSearchParams(location.search);if(k)u.set('t',k);else u.delete('t');var s=u.toString();history[push?'pushState':'replaceState']({t:k||null},'',location.pathname+(s?'?'+s:'')+location.hash)}catch(e){}}
   function show(k,push){
     if(!T[k]){k=null}
-    SEL=k;document.body.classList.toggle('s2',!!k);
+    SEL=k;document.body.classList.toggle('s2',!!k);try{el('pay').querySelector('.sum').classList.remove('f')}catch(e){}
     el('st1').classList.toggle('on',!k);el('st2').classList.toggle('on',!!k);
     if(k){var t=T[k],p=t[MODE];
       el('pName').textContent=t.nm;
@@ -201,6 +215,19 @@ body.m .mgr{display:block}
     if(push!==undefined)setUrl(k,push);
     try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){window.scrollTo(0,0)}
   }
+  /* 03.11: своя форма заказа вместо белой страницы GetCourse — данные уходят POST'ом прямо в форму заказа предложения (OrderForm), дальше — страница оплаты GetCourse */
+  var OFF=null;
+  function ordOpen(e,which){e.preventDefault();if(!SEL)return;var p=T[SEL][MODE][which];OFF=p[0];el('oWhat').textContent=(which==='now'?'Сразу':'В'+NB+'рассрочку')+' · '+T[SEL].nm;el('oSum').textContent=rub(p[1]);el('pay').querySelector('.sum').classList.add('f');el('oErr').textContent='';setTimeout(function(){el('oName').focus()},50)}
+  el('payNow').addEventListener('click',function(e){ordOpen(e,'now')});el('payInst').addEventListener('click',function(e){ordOpen(e,'inst')});
+  el('oChg').addEventListener('click',function(){el('pay').querySelector('.sum').classList.remove('f')});
+  el('ord').addEventListener('submit',function(e){e.preventDefault();var n=el('oName').value.trim(),m=el('oMail').value.trim(),t=el('oTel').value.trim(),bad=[];
+    [el('oName'),el('oMail'),el('oTel')].forEach(function(x){x.classList.remove('bad')});
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(m)){bad.push('почту');el('oMail').classList.add('bad')}
+    if(t.replace(/\D/g,'').length<10){bad.push('телефон');el('oTel').classList.add('bad')}
+    if(bad.length){el('oErr').textContent='Проверь '+bad.join(' и'+NB);return}
+    var f=document.createElement('form');f.method='post';f.action=GC+OFF;f.target='_top';f.acceptCharset='utf-8';
+    [['OrderForm[selected_offer_id]',OFF],['OrderForm[email]',m],['OrderForm[phone]',t],['OrderForm[full_name]',n],['OrderForm[created_by_object_type]',''],['OrderForm[created_by_object_id]',''],['OrderForm[created_by_object_variant_id]','']].forEach(function(kv){var i=document.createElement('input');i.type='hidden';i.name=kv[0];i.value=kv[1];f.appendChild(i)});
+    document.body.appendChild(f);el('oGo').textContent='Переходим к'+NB+'оплате…';el('oGo').disabled=true;f.submit()});
   el('cards').addEventListener('click',function(e){var b=e.target.closest('[data-k]');if(b)show(b.getAttribute('data-k'),true)});
   el('back').addEventListener('click',function(){if(history.state&&history.state.t)history.back();else show(null,false)});
   window.addEventListener('popstate',function(){var k=new URLSearchParams(location.search).get('t');show(k)});
