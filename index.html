@@ -100,6 +100,10 @@ body.s2 .grid,body.s2 #n1{display:none}
 .ord .chosen{display:flex;justify-content:space-between;gap:12px;align-items:baseline;padding:12px 14px;border-radius:14px;background:var(--s2);border:1px solid var(--hair);font-size:14px;color:var(--ink2)}.ord .chosen b{color:var(--fg);font-weight:500;font-size:16px;white-space:nowrap}
 .ord label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--ink2)}.ord input{height:50px;border-radius:14px;border:1px solid var(--hair2);background:#0a0a0a;color:#fff;font:400 16px/1 inherit;font-family:inherit;padding:0 14px;outline:0}.ord input:focus{border-color:var(--lil);box-shadow:0 0 0 4px rgba(195,139,255,.16)}
 .ord input.bad{border-color:rgba(255,143,143,.7)}.ord .err{color:#ff8f8f;font-size:13px;min-height:0}.ord .chg{align-self:flex-start;background:none;border:0;color:var(--lil);font:inherit;font-size:14px;padding:4px 0;cursor:pointer}.ord .fine{font-size:12px;color:var(--ink3);line-height:1.45}
+.soloInfo{display:none}body.solo .soloInfo{display:flex;flex-direction:column;gap:14px}body.solo .steps,body.solo #back,body.solo #oChg,body.solo .grid,body.solo #n1,body.solo .sum>.k{display:none!important}
+body.solo .soloInfo ul.inc{margin:0}body.solo .soloInfo .pr.full,body.solo.now .soloInfo .pr.full{opacity:.8}body.solo.inst .soloInfo .pr.disc{display:none}
+body.mgrp .grid,body.mgrp #n1,body.mgrp .steps,body.mgrp .pay{display:none!important}body.mgrp .mgr{margin-top:8px;border-top:0;padding-top:0}
+.mgr h4 .stg{font-weight:400;color:var(--ink3);text-transform:none;letter-spacing:0}
 .mgr{display:none;margin-top:48px;border-top:1px solid var(--hair2);padding-top:22px}
 body.m .mgr{display:block}
 .mgr h3{font-size:22px;margin-bottom:6px}
@@ -154,6 +158,7 @@ body.m .mgr{display:block}
     <div class="sum">
       <div class="k">Твой тариф</div>
       <h2 id="pName"></h2>
+      <div class="soloInfo" id="soloInfo"></div>
       <div class="opts">
         <a class="btn pink opt" id="payNow" href="#"><span id="payNowT"></span><small id="payNowS">картой, СБП или&nbsp;зарубежной картой</small></a>
         <a class="btn ghost opt" id="payInst" href="#"><span id="payInstT"></span><small>Сплит, Подели или&nbsp;рассрочка банков</small></a>
@@ -178,11 +183,10 @@ body.m .mgr{display:block}
 
   <section class="mgr" id="mgr" aria-label="Ссылки для менеджеров">
     <h3>Ссылки для менеджеров</h3>
-    <p>Клиент вводит свои имя, почту и&nbsp;телефон на&nbsp;нашей странице&nbsp;— заказ оформится на&nbsp;него, даже если ссылку открывал ты.</p>
-    <h4>Страница тарифов</h4>
-    <div class="rows" id="mPages"></div>
-    <h4>Сразу на форму заказа</h4>
+    <p>Скопируй ссылку под нужный тариф и&nbsp;способ оплаты и&nbsp;отправь клиенту. По&nbsp;ссылке он&nbsp;увидит только этот тариф и&nbsp;сразу форму заказа: имя, почта, телефон&nbsp;— и&nbsp;на&nbsp;оплату. Заказ оформится на&nbsp;клиента, даже если ссылку открывал ты.</p>
     <div class="rows" id="mOffers"></div>
+    <h4 style="margin-top:26px">Страница со&nbsp;всеми тарифами</h4>
+    <div class="rows" id="mPages"></div>
   </section>
 </div>
 <footer class="ft" aria-label="Информация о школе">
@@ -235,6 +239,11 @@ body.m .mgr{display:block}
   };
   var ORDER=['base','premium','amazon'];
   var Q=new URLSearchParams(location.search), REG=Q.get('p')==='regular', MODE=REG?'regular':'early', SEL=null;
+  /* 03.11: отдельная страница на тариф и способ оплаты — /premium-full, /premium-parts, …-regular (обычная цена); /manager — кабинет ссылок для менеджеров */
+  var SP=location.pathname.match(/^\/(base|premium|amazon)-(full|parts)(-regular)?\/?$/), SOLO=SP?{t:SP[1],w:SP[2]==='full'?'now':'inst'}:null; if(SP&&SP[3]){REG=true;MODE='regular'}
+  var MGR=/^\/manager\/?$/.test(location.pathname)||Q.get('m')==='1';
+  function slug(k,w,m){return '/'+k+'-'+(w==='now'?'full':'parts')+(m==='regular'&&k!=='base'?'-regular':'')}
+  function priceHtml(p){return '<div class="price"><div class="pr full"><span class="l">Обычная цена<small>можно оплатить частями</small></span><b>'+rub(p.inst[1])+'</b></div>'+'<div class="pr disc"><span class="l">При оплате сразу</span><i>скидка '+pct(p)+'%</i><b>'+rub(p.now[1])+'</b><small class="sv">экономия '+rub(p.inst[1]-p.now[1])+'</small></div></div>'}
   function pct(p){return Math.floor((p.inst[1]-p.now[1])/p.inst[1]*100)}
   function rub(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,NB)+NB+'₽'}
   function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -284,19 +293,22 @@ body.m .mgr{display:block}
   var t0=Q.get('t');if(t0==='prem')t0='premium';if(t0==='amz')t0='amazon';if(T[t0])show(t0,false);
   /* ?pay=now|inst — сразу форма заказа выбранного тарифа (ссылки для менеджеров) */
   setTimeout(function(){var w=Q.get('pay');if(SEL&&(w==='now'||w==='inst'))ordOpen({preventDefault:function(){}},w)},0);
+  if(SOLO&&T[SOLO.t]){document.body.classList.add('solo',SOLO.w);show(SOLO.t,false);var tt=T[SOLO.t],pp=tt[MODE];
+    el('soloInfo').innerHTML=priceHtml(pp)+'<ul class="inc">'+tt.inc.map(function(x){return '<li'+(x[1]?' class="'+x[1]+'"':'')+'>'+esc(x[0])+'</li>'}).join('')+'</ul>';
+    var hp=document.querySelector('.hero p');if(hp)hp.textContent='Тариф «'+tt.nm+'» · '+(SOLO.w==='now'?'оплата сразу со'+NB+'скидкой '+pct(pp)+'%':'оплата частями')+'. Закрытая группа, старт 25'+NB+'ноября.';
+    document.title=tt.nm+' · '+(SOLO.w==='now'?'оплата сразу':'оплата частями')+' · OduvanovSchool';
+    setTimeout(function(){ordOpen({preventDefault:function(){}},SOLO.w)},0)}
 
-  /* ?m=1 — ссылки для менеджеров */
-  if(Q.get('m')==='1'){document.body.classList.add('m');
-    var base=location.origin+location.pathname;
+  /* /manager (или ?m=1) — ссылки для менеджеров: отдельная страница на каждый тариф и способ оплаты */
+  if(MGR){document.body.classList.add('m');if(/^\/manager/.test(location.pathname)){document.body.classList.add('mgrp');var hp0=document.querySelector('.hero p');if(hp0)hp0.textContent='Кабинет менеджера: ссылки на оплату закрытой группы, старт 25'+NB+'ноября.';document.title='Ссылки для менеджеров · OduvanovSchool'}
+    var base=location.origin;
     function row(title,sub,price,url){return '<div class="row"><div class="t"><b>'+esc(title)+'</b><span>'+esc(sub||url)+'</span></div>'+(price?'<div class="p">'+price+'</div>':'<div></div>')+'<div class="a"><a class="mini" href="'+esc(url)+'" target="_blank" rel="noopener">Открыть</a><button class="mini" type="button" data-copy="'+esc(url)+'">Копировать</button></div></div>'}
-    var pg=[['Тарифы, ранние цены',base],['Тарифы, обычные цены',base+'?p=regular']];
-    ORDER.forEach(function(k){pg.push([T[k].nm+', ранняя цена',base+'?t='+k]);if(k!=='base')pg.push([T[k].nm+', обычная цена',base+'?p=regular&t='+k])});
-    el('mPages').innerHTML=pg.map(function(x){return row(x[0],x[1],'',x[1])}).join('');
-    var of=[];ORDER.forEach(function(k){var t=T[k];(k==='base'?['early']:['early','regular']).forEach(function(m){var p=t[m],lb=k==='base'?'':(m==='early'?' · ранняя':' · обычная');
-      var q='?'+(m==='regular'?'p=regular&':'')+'t='+k;
-      of.push(row(t.nm+lb+' · сразу со скидкой',base+q+'&pay=now',rub(p.now[1]),base+q+'&pay=now'));
-      of.push(row(t.nm+lb+' · частями',base+q+'&pay=inst',rub(p.inst[1]),base+q+'&pay=inst'))})});
+    var of=[];['early','regular'].forEach(function(m){of.push('<h4 style="margin:18px 0 8px">'+(m==='early'?'Сейчас — ранняя цена':'Потом — обычная цена')+' <span class="stg">· одна ссылка = один тариф и один способ оплаты</span></h4>');
+      ORDER.forEach(function(k){var t=T[k],p=t[m];if(k==='base'&&m==='regular')return;
+        of.push(row(t.nm+' · сразу, скидка '+pct(p)+'%',base+slug(k,'now',m),rub(p.now[1]),base+slug(k,'now',m)));
+        of.push(row(t.nm+' · частями',base+slug(k,'inst',m),rub(p.inst[1]),base+slug(k,'inst',m)))})});
     el('mOffers').innerHTML=of.join('');
+    el('mPages').innerHTML=row('Все тарифы, ранние цены','клиент сам выбирает тариф и способ','',base+'/')+row('Все тарифы, обычные цены','','',base+'/?p=regular');
     el('mgr').addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var u=b.getAttribute('data-copy');
       function done(){b.textContent='Скопировано';b.classList.add('ok');setTimeout(function(){b.textContent='Копировать';b.classList.remove('ok')},1600)}
       function fb(){try{var ta=document.createElement('textarea');ta.value=u;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();done()}catch(x){}}
