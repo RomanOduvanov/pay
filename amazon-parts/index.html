@@ -293,7 +293,7 @@ body.m .mgr{display:block}
   var t0=Q.get('t');if(t0==='prem')t0='premium';if(t0==='amz')t0='amazon';if(T[t0])show(t0,false);
   /* ?pay=now|inst — сразу форма заказа выбранного тарифа (ссылки для менеджеров) */
   setTimeout(function(){var w=Q.get('pay');if(SEL&&(w==='now'||w==='inst'))ordOpen({preventDefault:function(){}},w)},0);
-  if(SOLO&&T[SOLO.t]){document.body.classList.add('solo',SOLO.w);show(SOLO.t,false);var tt=T[SOLO.t],pp=tt[MODE];
+  if(SOLO&&T[SOLO.t]){document.body.classList.add('solo',SOLO.w);show(SOLO.t);var tt=T[SOLO.t],pp=tt[MODE];
     el('soloInfo').innerHTML=priceHtml(pp)+'<ul class="inc">'+tt.inc.map(function(x){return '<li'+(x[1]?' class="'+x[1]+'"':'')+'>'+esc(x[0])+'</li>'}).join('')+'</ul>';
     var hp=document.querySelector('.hero p');if(hp)hp.textContent='Тариф «'+tt.nm+'» · '+(SOLO.w==='now'?'оплата сразу со'+NB+'скидкой '+pct(pp)+'%':'оплата частями')+'. Закрытая группа, старт 25'+NB+'ноября.';
     document.title=tt.nm+' · '+(SOLO.w==='now'?'оплата сразу':'оплата частями')+' · OduvanovSchool';
