@@ -132,7 +132,7 @@ body.m .mgr{display:block}
 .ft-bot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;padding-top:18px;border-top:1px solid var(--hair);font-size:12.5px;color:var(--ink3)}
 @media(max-width:860px){.ft-top{grid-template-columns:1fr 1fr}.ft-brand{grid-column:1/-1}}
 @media(max-width:560px){.ft-top{grid-template-columns:1fr;gap:26px}.ft-in{padding-top:28px}}
-</style>
+.nw{white-space:nowrap}.hero p{text-wrap:pretty}</style>
 </head>
 <body>
 <div class="wrap">
@@ -143,7 +143,7 @@ body.m .mgr{display:block}
 
   <header class="hero">
     <h1>AI-дизайнер с&nbsp;0 до&nbsp;PRO&nbsp;3.0</h1>
-    <p>AI-дизайн с&nbsp;нуля, портфолио и&nbsp;первые заказы&nbsp;— в&nbsp;закрытой группе, старт 25&nbsp;ноября. Выбери тариф, затем способ оплаты&nbsp;— частями или сразу со&nbsp;скидкой.</p>
+    <p>AI-дизайн с&nbsp;нуля, портфолио и&nbsp;первые заказы&nbsp;— <span class="nw">в закрытой группе,</span> <span class="nw">старт 25 ноября</span>.<br>Выбери тариф, затем способ оплаты&nbsp;— частями или сразу со&nbsp;скидкой.</p>
   </header>
 
   <div class="steps" aria-label="Шаги">
@@ -295,12 +295,12 @@ body.m .mgr{display:block}
   setTimeout(function(){var w=Q.get('pay');if(SEL&&(w==='now'||w==='inst'))ordOpen({preventDefault:function(){}},w)},0);
   if(SOLO&&T[SOLO.t]){document.body.classList.add('solo',SOLO.w);show(SOLO.t);var tt=T[SOLO.t],pp=tt[MODE];
     el('soloInfo').innerHTML=priceHtml(pp)+'<ul class="inc">'+tt.inc.map(function(x){return '<li'+(x[1]?' class="'+x[1]+'"':'')+'>'+esc(x[0])+'</li>'}).join('')+'</ul>';
-    var hp=document.querySelector('.hero p');if(hp)hp.textContent='Тариф «'+tt.nm+'» · '+(SOLO.w==='now'?'оплата сразу со'+NB+'скидкой '+pct(pp)+'%':'оплата частями')+'. Закрытая группа, старт 25'+NB+'ноября.';
+    var hp=document.querySelector('.hero p');if(hp)hp.innerHTML='<span class="nw">Тариф «'+esc(tt.nm)+'»,</span> <span class="nw">'+(SOLO.w==='now'?'оплата сразу со скидкой '+pct(pp)+'%':'оплата частями')+'</span><br>Закрытая группа · <span class="nw">старт 25 ноября</span>';
     document.title=tt.nm+' · '+(SOLO.w==='now'?'оплата сразу':'оплата частями')+' · OduvanovSchool';
     setTimeout(function(){ordOpen({preventDefault:function(){}},SOLO.w)},0)}
 
   /* /manager (или ?m=1) — ссылки для менеджеров: отдельная страница на каждый тариф и способ оплаты */
-  if(MGR){document.body.classList.add('m');if(/^\/manager/.test(location.pathname)){document.body.classList.add('mgrp');var hp0=document.querySelector('.hero p');if(hp0)hp0.textContent='Кабинет менеджера: ссылки на оплату закрытой группы, старт 25'+NB+'ноября.';document.title='Ссылки для менеджеров · OduvanovSchool'}
+  if(MGR){document.body.classList.add('m');if(/^\/manager/.test(location.pathname)){document.body.classList.add('mgrp');var hp0=document.querySelector('.hero p');if(hp0)hp0.innerHTML='Кабинет менеджера: ссылки на&nbsp;оплату<br>Закрытая группа · <span class="nw">старт 25 ноября</span>';document.title='Ссылки для менеджеров · OduvanovSchool'}
     var base=location.origin;
     function row(title,sub,price,url){return '<div class="row"><div class="t"><b>'+esc(title)+'</b><span>'+esc(sub||url)+'</span></div>'+(price?'<div class="p">'+price+'</div>':'<div></div>')+'<div class="a"><a class="mini" href="'+esc(url)+'" target="_blank" rel="noopener">Открыть</a><button class="mini" type="button" data-copy="'+esc(url)+'">Копировать</button></div></div>'}
     var of=[];['early','regular'].forEach(function(m){of.push('<h4 style="margin:18px 0 8px">'+(m==='early'?'Сейчас — ранняя цена':'Потом — обычная цена')+' <span class="stg">· одна ссылка = один тариф и один способ оплаты</span></h4>');
