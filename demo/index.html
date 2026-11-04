@@ -32,7 +32,7 @@ h1,h2,h3{margin:0;font-weight:500;letter-spacing:-.03em;text-wrap:balance}
 .inc li b{color:var(--fg);font-weight:500;font-size:15px}
 .what{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}.what span{font-size:13px;padding:6px 12px;border-radius:999px;background:var(--s2);border:1px solid var(--hair2)}
 .card{background:var(--s1);border:1px solid var(--lilLine);border-radius:24px;padding:24px 20px;display:flex;flex-direction:column;gap:14px;position:sticky;top:20px}
-.card h2{font-size:26px;line-height:1.1}.card .sub{color:var(--ink2);font-size:14px;margin-top:0}.card .pre{display:flex;flex-direction:column;gap:8px}
+.card h2{font-size:26px;line-height:1.1}.card .sub{color:var(--ink2);font-size:15px;line-height:1.45;margin-top:0;text-wrap:pretty;max-width:42ch}.err{text-wrap:pretty}.card .pre{display:flex;flex-direction:column;gap:8px}
 form{display:flex;flex-direction:column;gap:12px}
 label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--ink2)}
 input{height:52px;border-radius:14px;border:1px solid var(--hair2);background:#0a0a0a;color:#fff;font:400 16px/1 var(--F);padding:0 14px;outline:0;width:100%}
@@ -141,10 +141,12 @@ input:focus{border-color:var(--lilLine)}input.bad{border-color:rgba(255,143,143,
 (function(){
   var API='https://oduvanov-api.romanoduvanov52.workers.dev',NB='\u00a0',Q=new URLSearchParams(location.search),C=(Q.get('c')||'').slice(0,40);
   function el(id){return document.getElementById(id)}
+  /* 05.11 (Роман: «висячие предлоги»): тексты с сервера — неразрывный пробел после коротких слов и перед тире */
+  function ty(t){return String(t||'').replace(/(^|[\s(«])(в|во|на|с|со|к|ко|и|а|но|до|за|по|от|из|у|о|об|не|ни|же|для|без|или|это|уже|ещё|раз|при)\s+/gi,function(m,a,w){return a+w+NB}).replace(/\s+—\s*/g,NB+'— ')}
   function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
   function dw(n){return n===1?'1'+NB+'день':n+NB+'дня'}
   function when(s){try{return new Date(s).toLocaleString('ru-RU',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Moscow'})+' МСК'}catch(e){return ''}}
-  function bad(t){el('f').style.display='none';var b=el('badLink');b.style.display='';b.textContent=t;el('what').innerHTML=''}
+  function bad(t){el('f').style.display='none';var b=el('badLink');b.style.display='';b.textContent=ty(t);el('what').innerHTML=''}
   if(!C){bad('Ссылка неполная. Попроси менеджера прислать её ещё раз.');return}
   fetch(API+'/demo/info?c='+encodeURIComponent(C)).then(function(r){return r.json()}).then(function(j){
     if(!j||!j.ok){bad((j&&j.err)||'Ссылка недействительна');return}
@@ -160,7 +162,7 @@ input:focus{border-color:var(--lilLine)}input.bad{border-color:rgba(255,143,143,
     if(er.length){el('fErr').textContent='Проверь '+er.join(', ');return}
     var b=el('fGo');b.disabled=true;b.textContent='Открываем доступ…';el('fErr').textContent='';
     fetch(API+'/demo/claim',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({c:C,name:n,email:m,phone:t})}).then(function(r){return r.json()}).then(function(r){
-      if(!r||!r.ok){el('fErr').textContent=(r&&r.err)||'Не получилось — попробуй ещё раз';if(r&&r.login){el('okGo').href=r.login}if(r&&r.have){document.body.classList.add('done');el('okT').textContent='У тебя уже есть доступ';el('okS').textContent=r.err;el('okSteps').innerHTML=''}return}
+      if(!r||!r.ok){el('fErr').textContent=ty((r&&r.err)||'Не получилось — попробуй ещё раз');if(r&&r.login){el('okGo').href=r.login}if(r&&r.have){document.body.classList.add('done');el('okT').textContent='У'+NB+'тебя уже есть доступ';el('okS').textContent=ty(r.err);el('okSteps').innerHTML=''}return}
       document.body.classList.add('done');el('okT').textContent=r.again?'Доступ уже открыт':'Доступ открыт';
       el('okS').innerHTML='Демо работает до&nbsp;<b>'+esc(when(r.until))+'</b>';
       el('okSteps').innerHTML='<li><b>1</b><span>Нажми «Войти на&nbsp;платформу».</span></li><li><b>2</b><span>Введи почту <em>'+esc(m)+'</em>.</span></li><li><b>3</b><span>Пароля пока нет&nbsp;— нажми «Забыли пароль?», и&nbsp;ссылка для входа придёт на&nbsp;эту почту за&nbsp;пару минут. Письма нет&nbsp;— загляни в&nbsp;«Спам».</span></li>';
