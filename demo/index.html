@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Демо-доступ · OduvanovSchool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap">
+<style>
+/* 05.11 (Роман): демо-доступ для лидов. Ссылку даёт менеджер (?c=код из кабинета менеджера), человек вводит имя, почту и телефон —
+   сервер (/demo/claim) открывает бесплатный доступ в GetCourse на 1–3 дня и ведёт на платформу. */
+:root{--bg:#000106;--s1:#161616;--s2:#1f1f1f;--s3:#262626;--hair:rgba(255,255,255,.08);--hair2:rgba(255,255,255,.14);--fg:#fff;--ink2:rgba(255,255,255,.64);--ink3:rgba(255,255,255,.42);
+  --lil:#c38bff;--lilBg:rgba(195,139,255,.12);--lilLine:rgba(195,139,255,.42);--pinkA:#fef8ff;--pinkB:#fccbff;--pinkT:#602364;--F:"Inter Tight",Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:dark}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font:400 15px/1.45 var(--F);-webkit-font-smoothing:antialiased;background-image:radial-gradient(1100px 520px at 50% 110%,rgba(122,52,214,.30),transparent 70%);background-attachment:fixed}
+a{color:inherit}button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--lil);outline-offset:3px}
+.wrap{max-width:1040px;margin:0 auto;padding:28px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px))}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:34px}
+.brand{display:flex;align-items:center;gap:12px}.brand svg{flex:none;display:block}.brand span{font-family:"Inter Tight",Inter,sans-serif;font-weight:700;font-size:20px;line-height:1;letter-spacing:-.02em;color:#fff}.brand i{font-style:normal;font-weight:500;color:#c9a2ff}
+.badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--lilLine);background:var(--lilBg);color:var(--lil);border-radius:999px;padding:7px 13px;font-size:13px;font-weight:500;white-space:nowrap}
+.badge i{width:7px;height:7px;border-radius:50%;background:var(--lil);box-shadow:0 0 10px var(--lil)}
+h1,h2,h3{margin:0;font-weight:500;letter-spacing:-.03em;text-wrap:balance}
+.lay{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:28px;align-items:start}
+.hero{display:flex;flex-direction:column;gap:14px}
+.hero h1{font-size:clamp(34px,5.6vw,56px);line-height:1.02;letter-spacing:-.045em}
+.hero p{margin:0;color:var(--ink2);font-size:16px;max-width:52ch;text-wrap:pretty}
+.inc{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.inc li{display:flex;flex-direction:column;gap:3px;padding:14px;border-radius:18px;background:var(--s1);border:1px solid var(--hair);font-size:14px;color:var(--ink2);line-height:1.35}
+.inc li b{color:var(--fg);font-weight:500;font-size:15px}
+.what{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}.what span{font-size:13px;padding:6px 12px;border-radius:999px;background:var(--s2);border:1px solid var(--hair2)}
+.card{background:var(--s1);border:1px solid var(--lilLine);border-radius:24px;padding:24px 20px;display:flex;flex-direction:column;gap:14px;position:sticky;top:20px}
+.card h2{font-size:26px;line-height:1.08}.card .sub{color:var(--ink2);font-size:14px;margin-top:-6px}
+form{display:flex;flex-direction:column;gap:12px}
+label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--ink2)}
+input{height:52px;border-radius:14px;border:1px solid var(--hair2);background:#0a0a0a;color:#fff;font:400 16px/1 var(--F);padding:0 14px;outline:0;width:100%}
+input:focus{border-color:var(--lilLine)}input.bad{border-color:rgba(255,143,143,.7)}
+.err{color:#ff8f8f;font-size:13px}.err:empty{display:none}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:54px;border-radius:16px;padding:12px 18px;font-weight:500;font-size:16px;text-decoration:none;text-align:center;transition:transform .12s ease,filter .12s ease;width:100%}
+.btn:active{transform:scale(.985)}.btn:disabled{opacity:.6;cursor:default}
+.btn.pink{background:linear-gradient(180deg,var(--pinkA),var(--pinkB));color:var(--pinkT)}.btn.pink:hover{filter:brightness(1.04)}
+.btn.ghost{background:var(--s3);color:var(--fg);border:1px solid var(--hair2)}
+.fine{margin:0;font-size:12px;color:var(--ink3);line-height:1.45}.fine a{color:var(--ink2)}
+.ok{display:none;flex-direction:column;gap:14px}.done .ok{display:flex}.done form,.done .card>.pre{display:none}
+.ok .chk{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(74,222,128,.14);border:1px solid rgba(74,222,128,.4);color:#4ade80}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;color:var(--ink2);font-size:14px}
+.steps li{display:flex;gap:10px}.steps li b{flex:none;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--s3);font-weight:500;font-size:12px;color:var(--fg)}
+.steps em{font-style:normal;color:var(--fg)}
+.bad-link{padding:16px;border-radius:16px;background:rgba(255,180,140,.08);border:1px solid rgba(255,180,140,.3);color:#ffd2bd;font-size:14px}
+.sk{height:16px;border-radius:8px;background:linear-gradient(90deg,#141418,#1e1e25,#141418);background-size:200% 100%;animation:sk 1.3s linear infinite}@keyframes sk{to{background-position:-200% 0}}
+.nw{white-space:nowrap}
+@media (max-width:860px){.lay{grid-template-columns:minmax(0,1fr)}.card{position:static}}
+@media (max-width:480px){.wrap{padding-top:18px}.top{margin-bottom:24px;flex-wrap:wrap}.inc{grid-template-columns:minmax(0,1fr)}.hero p{font-size:15px}.card h2{font-size:24px}}
+.ft{border-top:1px solid var(--hair);margin-top:24px;background:linear-gradient(180deg,rgba(255,255,255,.015),transparent)}
+.ft-in{max-width:1120px;margin:0 auto;padding:36px max(16px,env(safe-area-inset-right,0px)) calc(28px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:28px}
+.ft-top{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1fr);gap:28px 40px}
+.ft-brand{display:flex;flex-direction:column;gap:14px}.ft-brand .brand span{font-size:17px}.ft-brand p{margin:0;color:var(--ink2);font-size:14px;line-height:1.5;max-width:34ch}
+.ft-soc{display:flex;flex-wrap:wrap;gap:8px}.ft-soc a{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border-radius:11px;background:var(--s1);border:1px solid var(--hair);color:var(--fg);text-decoration:none;font-size:13px}.ft-soc a:hover{border-color:var(--lilLine)}
+.ft-col{display:flex;flex-direction:column;gap:10px;font-size:14px;line-height:1.45;color:var(--ink2);min-width:0}.ft-col h4{margin:0 0 2px;font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.ft-col a{color:var(--ink2);text-decoration:none;overflow-wrap:anywhere}.ft-col a:hover{color:var(--lil)}
+.ft-bot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;padding-top:18px;border-top:1px solid var(--hair);font-size:12.5px;color:var(--ink3)}
+@media(max-width:860px){.ft-top{grid-template-columns:1fr 1fr}.ft-brand{grid-column:1/-1}}
+@media(max-width:560px){.ft-top{grid-template-columns:1fr;gap:26px}.ft-in{padding-top:28px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand" aria-label="OduvanovSchool"><svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><rect width="20" height="20" rx="3" fill="#fff"/><rect x="22" width="20" height="20" rx="3" fill="#fff"/><rect x="44" width="20" height="20" rx="3" fill="#c9a2ff"/><rect y="22" width="20" height="20" rx="3" fill="#fff"/><rect x="44" y="22" width="20" height="20" rx="3" fill="#fff"/><rect y="44" width="20" height="20" rx="3" fill="#fff"/><rect x="22" y="44" width="20" height="20" rx="3" fill="#fff"/><rect x="44" y="44" width="20" height="20" rx="3" fill="#fff"/></svg><span>Oduvanov<i>School</i></span></div>
+    <span class="badge"><i></i>Бесплатный демо-доступ</span>
+  </div>
+  <div class="lay">
+    <header class="hero">
+      <h1>Загляни внутрь обучения</h1>
+      <p id="lead">Открой платформу школы и&nbsp;посмотри, как всё устроено изнутри&nbsp;— <span class="nw">бесплатно,</span> без&nbsp;оплаты и&nbsp;карты.</p>
+      <div class="what" id="what"><span class="sk" style="width:220px"></span></div>
+      <ul class="inc">
+        <li><b>Уроки закрытой группы</b>Программа AI-дизайнер 3.0 по&nbsp;модулям. Уроки открываются по&nbsp;расписанию потока&nbsp;— список и&nbsp;даты видно сразу</li>
+        <li><b>Нейро-помощник</b>Отвечает на&nbsp;вопросы по&nbsp;урокам и&nbsp;дизайну прямо на&nbsp;платформе</li>
+        <li><b>Умный поиск</b>Находит нужный момент в&nbsp;уроках по&nbsp;смыслу, а&nbsp;не&nbsp;по&nbsp;словам</li>
+        <li><b>Кураторы и&nbsp;рейтинг</b>Кто ведёт поток, как устроены домашки, баллы и&nbsp;рейтинг учеников</li>
+      </ul>
+    </header>
+    <section class="card" id="card" aria-live="polite">
+      <div class="pre"><h2 id="cTitle">Получить демо-доступ</h2><div class="sub" id="cSub">Заполни форму&nbsp;— доступ откроется сразу</div></div>
+      <div class="bad-link" id="badLink" style="display:none"></div>
+      <form id="f" novalidate>
+        <label>Имя<input id="fName" autocomplete="name" placeholder="Анна" maxlength="80"></label>
+        <label>Почта<input id="fMail" type="email" inputmode="email" autocomplete="email" placeholder="you@mail.ru" maxlength="120"></label>
+        <label>Телефон<input id="fTel" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 000-00-00" maxlength="30"></label>
+        <div class="err" id="fErr" role="alert"></div>
+        <button class="btn pink" id="fGo" type="submit">Открыть доступ</button>
+        <p class="fine">На&nbsp;эту почту будет вход на&nbsp;платформу. Нажимая кнопку, ты&nbsp;соглашаешься с&nbsp;<a href="https://disk.yandex.ru/i/rieVbzRz5zmWJQ" target="_blank" rel="noopener">политикой конфиденциальности</a> и&nbsp;<a href="https://disk.yandex.ru/i/VN6iHm8CzerQwA" target="_blank" rel="noopener">обработкой персональных данных</a>.</p>
+      </form>
+      <div class="ok" id="ok">
+        <div class="chk" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <h2 id="okT">Доступ открыт</h2>
+        <div class="sub" id="okS"></div>
+        <ol class="steps" id="okSteps"></ol>
+        <a class="btn pink" id="okGo" href="https://oduvanovroman.getcourse.ru/cms/system/login?required=true" target="_top">Войти на&nbsp;платформу</a>
+        <a class="btn ghost" id="okPay" href="#" target="_top" style="display:none">Оплатить полный доступ</a>
+      </div>
+    </section>
+  </div>
+</div>
+<footer class="ft" aria-label="Информация о школе">
+  <div class="ft-in">
+    <div class="ft-top">
+      <div class="ft-brand">
+        <div class="brand" aria-label="OduvanovSchool"><svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><rect width="20" height="20" rx="3" fill="#fff"/><rect x="22" width="20" height="20" rx="3" fill="#fff"/><rect x="44" width="20" height="20" rx="3" fill="#c9a2ff"/><rect y="22" width="20" height="20" rx="3" fill="#fff"/><rect x="44" y="22" width="20" height="20" rx="3" fill="#fff"/><rect y="44" width="20" height="20" rx="3" fill="#fff"/><rect x="22" y="44" width="20" height="20" rx="3" fill="#fff"/><rect x="44" y="44" width="20" height="20" rx="3" fill="#fff"/></svg><span>Oduvanov<i>School</i></span></div>
+        <p>Онлайн-школа по&nbsp;обучению дизайну и&nbsp;работе с&nbsp;нейросетями с&nbsp;образовательной лицензией</p>
+        <div class="ft-soc">
+          <a href="https://t.me/zabota_oduvanov" target="_blank" rel="noopener">Поддержка в&nbsp;Telegram</a>
+          <a href="https://t.me/+2EZPU-Wk-3kwOGYy" target="_blank" rel="noopener">Telegram-канал</a>
+          <a href="https://www.youtube.com/@romanoduvanov" target="_blank" rel="noopener">YouTube</a>
+        </div>
+      </div>
+      <div class="ft-col">
+        <h4>Документы</h4>
+        <a href="https://disk.yandex.ru/i/CyvFWo7TiSEnOQ" target="_blank" rel="noopener">Публичная оферта</a>
+        <a href="https://disk.yandex.ru/i/rieVbzRz5zmWJQ" target="_blank" rel="noopener">Политика конфиденциальности</a>
+        <a href="https://disk.yandex.ru/i/VN6iHm8CzerQwA" target="_blank" rel="noopener">Согласие на&nbsp;обработку персональных данных</a>
+        <a href="https://disk.yandex.ru/i/uOu6x0S3QkqOIw" target="_blank" rel="noopener">Согласие на&nbsp;рассылку сообщений</a>
+        <a href="https://drive.google.com/file/d/1ynPsPntd4NJVOnwPsGR-xZgkAU_qa2A1/view" target="_blank" rel="noopener">Программа обучения</a>
+      </div>
+      <div class="ft-col">
+        <h4>Реквизиты</h4>
+        <span>Индивидуальный предприниматель<br><span style="white-space:nowrap">Алексейчук Алексей Геннадьевич</span></span>
+        <span>ИНН 525813449006</span>
+        <span>ОГРНИП 323527500095866</span>
+        <span>Лицензия на&nbsp;образовательную деятельность №&nbsp;Л035-01281-52/02584121 от&nbsp;03.07.2025</span>
+        <a href="mailto:romanoduvanov52@gmail.com">romanoduvanov52@gmail.com</a>
+      </div>
+    </div>
+    <div class="ft-bot"><span>© OduvanovSchool. Все права защищены</span><span>® Роман Одуванов / Roman Oduvanov</span></div>
+  </div>
+</footer>
+<script>
+(function(){
+  var API='https://oduvanov-api.romanoduvanov52.workers.dev',NB='\u00a0',Q=new URLSearchParams(location.search),C=(Q.get('c')||'').slice(0,40);
+  function el(id){return document.getElementById(id)}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function dw(n){return n===1?'1'+NB+'день':n+NB+'дня'}
+  function when(s){try{return new Date(s).toLocaleString('ru-RU',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Moscow'})+' МСК'}catch(e){return ''}}
+  function bad(t){el('f').style.display='none';var b=el('badLink');b.style.display='';b.textContent=t;el('what').innerHTML=''}
+  if(!C){bad('Ссылка неполная. Попроси менеджера прислать её ещё раз.');return}
+  fetch(API+'/demo/info?c='+encodeURIComponent(C)).then(function(r){return r.json()}).then(function(j){
+    if(!j||!j.ok){bad((j&&j.err)||'Ссылка недействительна');return}
+    el('what').innerHTML=j.items.map(function(t){return '<span>'+esc(t)+' · '+dw(j.days)+'</span>'}).join('')+(j.full||[]).map(function(t){return '<span>'+esc(t)+' · полный доступ</span>'}).join('');
+    el('cSub').innerHTML='Доступ на&nbsp;'+dw(j.days)+' откроется сразу после формы'+(j.full&&j.full.length&&j.sum?'. Полный доступ к&nbsp;'+esc(j.full.join(', '))+'&nbsp;— после оплаты '+Math.round(j.sum).toLocaleString('ru-RU')+NB+'₽':'');
+    el('lead').innerHTML='Открой платформу школы и&nbsp;посмотри, как всё устроено изнутри. <span class="nw">Бесплатно на&nbsp;'+dw(j.days)+',</span> без&nbsp;оплаты и&nbsp;карты.'
+  }).catch(function(){el('what').innerHTML=''});
+  el('f').addEventListener('submit',function(e){e.preventDefault();var n=el('fName').value.trim(),m=el('fMail').value.trim(),t=el('fTel').value.trim(),er=[];
+    [el('fName'),el('fMail'),el('fTel')].forEach(function(x){x.classList.remove('bad')});
+    if(n.length<2){er.push('имя');el('fName').classList.add('bad')}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(m)){er.push('почту');el('fMail').classList.add('bad')}
+    if(t.replace(/\D/g,'').length<10){er.push('телефон');el('fTel').classList.add('bad')}
+    if(er.length){el('fErr').textContent='Проверь '+er.join(', ');return}
+    var b=el('fGo');b.disabled=true;b.textContent='Открываем доступ…';el('fErr').textContent='';
+    fetch(API+'/demo/claim',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({c:C,name:n,email:m,phone:t})}).then(function(r){return r.json()}).then(function(r){
+      if(!r||!r.ok){el('fErr').textContent=(r&&r.err)||'Не получилось — попробуй ещё раз';if(r&&r.login){el('okGo').href=r.login}if(r&&r.have){document.body.classList.add('done');el('okT').textContent='У тебя уже есть доступ';el('okS').textContent=r.err;el('okSteps').innerHTML=''}return}
+      document.body.classList.add('done');el('okT').textContent=r.again?'Доступ уже открыт':'Доступ открыт';
+      el('okS').innerHTML='Демо работает до&nbsp;<b>'+esc(when(r.until))+'</b>';
+      el('okSteps').innerHTML='<li><b>1</b><span>Нажми «Войти на&nbsp;платформу».</span></li><li><b>2</b><span>Введи почту <em>'+esc(m)+'</em>.</span></li><li><b>3</b><span>Пароля пока нет&nbsp;— нажми «Забыли пароль?», и&nbsp;ссылка для входа придёт на&nbsp;эту почту за&nbsp;пару минут. Письма нет&nbsp;— загляни в&nbsp;«Спам».</span></li>';
+      if(r.login)el('okGo').href=r.login;if(r.pay){var p=el('okPay');p.href=r.pay;p.style.display=''}
+      try{window.scrollTo({top:0,behavior:'smooth'})}catch(x){}
+    }).catch(function(){el('fErr').textContent='Нет связи — проверь интернет и попробуй ещё раз'}).then(function(){b.disabled=false;b.textContent='Открыть доступ'})});
+})();
+</script>
+</body>
+</html>
