@@ -140,7 +140,8 @@ body.m .mgr{display:block}
 .cpl-i{height:46px;padding:0 14px;border-radius:12px;border:1px solid var(--hair2);background:#0d0d0f;color:#fff;font-family:inherit;font-size:15px;width:100%;box-sizing:border-box}.cpl-i:focus{outline:0;border-color:rgba(195,139,255,.6)}
 .cpl-go{width:100%;border:0;font-family:inherit;cursor:pointer}.cpl-go:disabled{opacity:.6;cursor:default}
 .cpl-out:empty{display:none}.cpl-out{padding:14px 16px;border-radius:14px;background:var(--s2);border:1px solid var(--hair2);font-size:14px}.cpl-out .err{color:#ffb4a8}.cpl-out .lk{display:flex;gap:8px;align-items:center;margin-top:8px}.cpl-out .lk input{flex:1;min-width:0}
-#cplLh{margin:22px 0 8px;font-weight:500;font-size:15px;color:var(--ink2)}
+#cplLh,#dmlLh{margin:22px 0 8px;font-weight:500;font-size:15px;color:var(--ink2)}
+.dml-r{display:flex;align-items:center;justify-content:space-between;gap:10px 14px;flex-wrap:wrap;padding:10px 12px;border-radius:14px;background:var(--s2);border:1px solid var(--hair)}.dml-n{display:flex;flex-direction:column;gap:2px;font-size:14px;font-weight:500}.dml-n small{font-weight:400;font-size:12.5px;color:var(--ink3)}.dml-fix{font-size:13px;color:var(--lil);border:1px solid var(--lilLine);background:var(--lilBg);border-radius:999px;padding:5px 12px}#dmlF .cpl-g>.dml-r+.dml-r{margin-top:0}.hid{display:none!important}
 </style>
 </head>
 <body>
@@ -188,6 +189,27 @@ body.m .mgr{display:block}
         <li><b>3</b><span>Откроется защищённая страница оплаты.</span></li>
       </ul>
     </div>
+  </section>
+
+  <section class="cpl" id="dml" aria-label="Демо-доступ">
+    <h3>Демо-доступ на&nbsp;платформу</h3>
+    <p>Бесплатно и&nbsp;на&nbsp;1–3 дня: человек сам вводит имя, почту и&nbsp;телефон по&nbsp;ссылке и&nbsp;сразу попадает на&nbsp;платформу&nbsp;— видит уроки закрытой группы, Нейро, умный поиск, кураторов и&nbsp;рейтинг. Ссылка одна на&nbsp;всех: скопируй и&nbsp;отправляй.</p>
+    <div class="cpl-lock" id="dmlLock">Открой этот кабинет по&nbsp;ссылке от&nbsp;бота школы (команда /manager у&nbsp;Романа)&nbsp;— без неё создать ссылку нельзя.</div>
+    <form id="dmlF" class="cpl-f hid" autocomplete="off">
+      <div class="cpl-g"><span class="cpl-l">Срок демо-доступа</span><div class="cpl-sg" id="dmlD"><button type="button" data-d="1" class="on">1 день</button><button type="button" data-d="2">2 дня</button><button type="button" data-d="3">3 дня</button></div></div>
+      <div class="cpl-g"><span class="cpl-l">Что откроется</span>
+        <div class="dml-r"><span class="dml-n">Закрытая группа 3.0<small>всегда, на&nbsp;срок демо</small></span><span class="dml-fix">Демо</span></div>
+        <div class="dml-r" data-a="sprint"><span class="dml-n">Спринт</span><div class="cpl-sg"><button type="button" data-v="" class="on">Нет</button><button type="button" data-v="demo">Демо</button><button type="button" data-v="full">Полный доступ</button></div></div>
+        <div class="dml-r" data-a="practicum"><span class="dml-n">Практикум по&nbsp;дизайну карточек</span><div class="cpl-sg"><button type="button" data-v="" class="on">Нет</button><button type="button" data-v="demo">Демо</button><button type="button" data-v="full">Полный доступ</button></div></div>
+        <div class="dml-r" data-a="camp"><span class="dml-n">Design Camp</span><div class="cpl-sg"><button type="button" data-v="" class="on">Нет</button><button type="button" data-v="demo">Демо</button><button type="button" data-v="full">Полный доступ</button></div></div>
+      </div>
+      <div class="cpl-g hid" id="dmlFull"><span class="cpl-l">Полный доступ: срок и&nbsp;сумма</span><div class="cpl-sg" id="dmlT"></div>
+        <label class="cpl-g" style="margin-top:6px"><span class="cpl-l">Сумма, ₽ (0&nbsp;— бесплатно)</span><input class="cpl-i" id="dmlSum" inputmode="decimal" value="0"></label>
+        <small class="cpl-h">С&nbsp;суммой человек после формы сразу попадёт на&nbsp;оплату, доступ откроется после неё. С&nbsp;нулём&nbsp;— откроется сразу.</small></div>
+      <button class="btn pink cpl-go" type="submit" id="dmlGo">Получить ссылку</button>
+      <div class="cpl-out" id="dmlOut"></div>
+    </form>
+    <h4 class="hid" id="dmlLh">Последние демо-доступы</h4><div class="rows" id="dmlList"></div>
   </section>
 
   <section class="cpl" id="cpl" aria-label="Своя ссылка на оплату">
@@ -341,6 +363,29 @@ body.m .mgr{display:block}
       try{navigator.clipboard.writeText(u).then(done,fb)}catch(x){fb()}});
   }
 
+  /* 05.11 (Роман): демо-доступ для лидов — одна ссылка на набор (закрытая группа 1–3 дня + Спринт / Практикум / Кэмп: демо или полный доступ) */
+  if(MGR&&/^\/manager/.test(location.pathname)){(function(){var API='https://oduvanov-api.romanoduvanov52.workers.dev',K='';try{K=Q.get('k')||localStorage.getItem('cplK')||''}catch(e){K=Q.get('k')||''}
+    if(!K)return;var call=function(p,b){return fetch(API+p+(b?'':'?k='+encodeURIComponent(K)),b?{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(Object.assign({k:K},b))}:{}).then(function(r){return r.json()})};
+    var D=1,A={},TERM='6m',NMS={zg:'Закрытая группа',sprint:'Спринт',practicum:'Практикум',camp:'Design Camp'};
+    var dd=function(s){var d=new Date(s);return d.toLocaleString('ru-RU',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Moscow'})+' МСК'};
+    var list=function(){call('/demo/list').then(function(j){if(!j||!j.ok)return;var L=j.claims||[];el('dmlLh').classList.toggle('hid',!L.length);
+      el('dmlList').innerHTML=L.slice(0,20).map(function(c){var it=(c.items||[]).map(function(x){return /^full:/.test(x)?NMS[x.slice(5)]+' (полный)':NMS[x]||x}).join(', '),on=Date.parse(c.until)>Date.now();
+        return '<div class="row"><div class="t"><b>'+esc(c.name||'')+' · '+esc(c.email)+'</b><span>'+esc(c.phone||'')+' · '+esc(it)+' · '+(on?'до '+dd(c.until):'закончился')+(c.pay_link?' · ждёт оплаты':'')+'</span></div><div></div><div class="a"></div></div>'}).join('')})};
+    call('/pay/catalog').then(function(j){if(!j||!j.ok){el('dmlLock').textContent=(j&&j.err)||'Нет доступа';return}el('dmlLock').classList.add('hid');el('dmlF').classList.remove('hid');
+      el('dmlT').innerHTML=j.terms.map(function(t){return '<button type="button" data-t="'+t.id+'"'+(t.id===TERM?' class="on"':'')+'>'+esc(t.t)+'</button>'}).join('');list()});
+    var seg=function(box,b){[].forEach.call(box.children,function(x){x.classList.toggle('on',x===b)})};
+    el('dmlD').onclick=function(e){var b=e.target.closest('[data-d]');if(!b)return;D=+b.getAttribute('data-d');seg(this,b);el('dmlOut').innerHTML=''};
+    el('dmlT').onclick=function(e){var b=e.target.closest('[data-t]');if(!b)return;TERM=b.getAttribute('data-t');seg(this,b);el('dmlOut').innerHTML=''};
+    el('dmlF').addEventListener('click',function(e){var b=e.target.closest('.dml-r[data-a] [data-v]');if(!b)return;var r=b.closest('[data-a]');A[r.getAttribute('data-a')]=b.getAttribute('data-v');seg(b.parentNode,b);
+      el('dmlFull').classList.toggle('hid',!Object.keys(A).some(function(k){return A[k]==='full'}));el('dmlOut').innerHTML=''});
+    el('dmlF').onsubmit=function(e){e.preventDefault();var add={};Object.keys(A).forEach(function(k){if(A[k])add[k]=A[k]});var full=Object.keys(add).some(function(k){return add[k]==='full'}),sum=full?+String(el('dmlSum').value).replace(/[\s ]/g,'').replace(',','.')||0:0,out=el('dmlOut');
+      if(!(sum>=0)){out.innerHTML='<span class="err">Проверь сумму</span>';return}var b=el('dmlGo');b.disabled=true;b.textContent='Готовим ссылку…';
+      call('/demo/link',{days:D,add:add,sum:sum,term:TERM}).then(function(r){if(!r||!r.ok){out.innerHTML='<span class="err">'+esc((r&&r.err)||'Не получилось — попробуй ещё раз')+'</span>';return}
+        var w=['Закрытая группа'].concat(Object.keys(add).filter(function(k){return add[k]==='demo'}).map(function(k){return NMS[k]})).join(', ')+' — '+D+NB+(D===1?'день':'дня')+(full?'; полный доступ: '+Object.keys(add).filter(function(k){return add[k]==='full'}).map(function(k){return NMS[k]}).join(', ')+(sum?' за '+sum.toLocaleString('ru-RU')+NB+'₽':' бесплатно'):'');
+        out.innerHTML='<b>Ссылка готова</b><span style="display:block;color:var(--ink2);margin-top:4px">'+esc(w)+'</span><div class="lk"><input class="cpl-i" readonly value="'+esc(r.link)+'"><button class="mini" type="button" data-copy="'+esc(r.link)+'">Копировать</button><a class="mini" href="'+esc(r.link)+'" target="_blank" rel="noopener">Открыть</a></div>'})
+      .catch(function(){out.innerHTML='<span class="err">Нет связи с сервером — попробуй ещё раз</span>'}).then(function(){b.disabled=false;b.textContent='Получить ссылку'})};
+    el('dml').addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var u=b.getAttribute('data-copy');try{navigator.clipboard.writeText(u).then(function(){b.textContent='Скопировано';setTimeout(function(){b.textContent='Копировать'},1600)})}catch(x){}});
+  })()}
   /* 03.11 (Роман): своя ссылка на оплату — бронь/предоплата: доступ (модули 3.0, весь курс, бонусы), срок, сумма → заказ GetCourse через сервер школы */
   if(MGR&&/^\/manager/.test(location.pathname)){(function(){var API='https://oduvanov-api.romanoduvanov52.workers.dev',K='';try{K=Q.get('k')||localStorage.getItem('cplK')||'';if(Q.get('k')){localStorage.setItem('cplK',Q.get('k'));history.replaceState(null,'',location.pathname)}}catch(e){K=Q.get('k')||''}
     if(!K)return;var call=function(p,b){return fetch(API+p+(b?'':'?k='+encodeURIComponent(K)),b?{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(Object.assign({k:K},b))}:{}).then(function(r){return r.json()})};
