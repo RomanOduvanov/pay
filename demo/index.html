@@ -46,7 +46,7 @@ input:focus{border-color:var(--lilLine)}input.bad{border-color:rgba(255,143,143,
 .ok{display:none;flex-direction:column;gap:14px}.done .ok{display:flex}.done form,.done .card>.pre{display:none}
 .ok .chk{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(74,222,128,.14);border:1px solid rgba(74,222,128,.4);color:#4ade80}
 .steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;color:var(--ink2);font-size:14px}
-.steps li{display:flex;gap:10px}.steps li b{flex:none;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--s3);font-weight:500;font-size:12px;color:var(--fg)}
+.steps li{display:flex;gap:12px;align-items:flex-start}.steps li span{text-wrap:pretty;padding-top:1px}.steps em{overflow-wrap:anywhere}.steps li b{flex:none;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--s3);font-weight:500;font-size:12px;color:var(--fg)}
 .steps em{font-style:normal;color:var(--fg)}
 .bad-link{padding:16px;border-radius:16px;background:rgba(255,180,140,.08);border:1px solid rgba(255,180,140,.3);color:#ffd2bd;font-size:14px}
 .sk{height:16px;border-radius:8px;background:linear-gradient(90deg,#141418,#1e1e25,#141418);background-size:200% 100%;animation:sk 1.3s linear infinite}@keyframes sk{to{background-position:-200% 0}}
@@ -164,8 +164,8 @@ input:focus{border-color:var(--lilLine)}input.bad{border-color:rgba(255,143,143,
     fetch(API+'/demo/claim',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({c:C,name:n,email:m,phone:t})}).then(function(r){return r.json()}).then(function(r){
       if(!r||!r.ok){el('fErr').textContent=ty((r&&r.err)||'Не получилось — попробуй ещё раз');if(r&&r.login){el('okGo').href=r.login}if(r&&r.have){document.body.classList.add('done');el('okT').textContent='У'+NB+'тебя уже есть доступ';el('okS').textContent=ty(r.err);el('okSteps').innerHTML=''}return}
       document.body.classList.add('done');el('okT').textContent=r.again?'Доступ уже открыт':'Доступ открыт';
-      el('okS').innerHTML='Демо работает до&nbsp;<b>'+esc(when(r.until))+'</b>';
-      el('okSteps').innerHTML='<li><b>1</b><span>Нажми «Войти на&nbsp;платформу».</span></li><li><b>2</b><span>Введи почту <em>'+esc(m)+'</em>.</span></li><li><b>3</b><span>Пароля пока нет&nbsp;— нажми «Забыли пароль?», и&nbsp;ссылка для входа придёт на&nbsp;эту почту за&nbsp;пару минут. Письма нет&nbsp;— загляни в&nbsp;«Спам».</span></li>';
+      el('okS').innerHTML='Демо работает до&nbsp;<b class="nw">'+esc(when(r.until)).replace(/ /g,NB)+'</b>';
+      el('okSteps').innerHTML='<li><b>1</b><span>Нажми «Войти на&nbsp;платформу».</span></li><li><b>2</b><span>Введи почту&nbsp;<em>'+esc(m)+'</em>.</span></li><li><b>3</b><span>Пароля пока нет&nbsp;— нажми «Забыли пароль?». Ссылка для&nbsp;входа придёт на&nbsp;эту почту за&nbsp;пару минут. Нет письма&nbsp;— проверь&nbsp;«Спам».</span></li>';
       if(r.login)el('okGo').href=r.login;if(r.pay){var p=el('okPay');p.href=r.pay;p.style.display=''}
       try{window.scrollTo({top:0,behavior:'smooth'})}catch(x){}
     }).catch(function(){el('fErr').textContent='Нет связи — проверь интернет и попробуй ещё раз'}).then(function(){b.disabled=false;b.textContent='Открыть доступ'})});
